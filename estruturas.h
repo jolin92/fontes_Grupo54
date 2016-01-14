@@ -11,7 +11,7 @@
 #define LINHA 9
 #define COLUNA 6
 
-typedef enum {B = 1, C, L}conforto;
+typedef enum {Basico = 1, Confortavel, Luxuoso}conforto;
 typedef enum {SIM = 1, NAO = 0}booleano;
 
 typedef struct {

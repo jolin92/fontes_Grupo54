@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Estruturas.h"
+#include "LP_Leitura.h"
+#include "LP_Utils.h"
 
 /*
  * 
@@ -24,70 +26,16 @@ const short TAMAGENDA = 10;
 void menu(viagem viagens[], const short TAMVIAGENS, condutor condutores[], const short TAMCONDUTORES,
         agendas agenda[], const short TAMAGENDA, int cont_viagem, int cont_condutor, int cont_agenda);
 
-unsigned long lerNumViagem(char mensagem[]) {
-    unsigned long id_viagem;
-
-    printf("%s", mensagem);
-    scanf("%lu", &id_viagem);
-
-    return id_viagem;
-}
-
-unsigned long lerNumCondutor(char mensagem[]) {
-    unsigned long id_condutor;
-
-    printf("%s", mensagem);
-    scanf("%lu", &id_condutor);
-
-    return id_condutor;
-}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-/**
- * Limpa o buffer de entrada de dados
- * Aviso: Caso o buffer de entrada nÃ£o contenha dados, a funÃ§Ã£o fica a aguardar que se introduzam dados 
- */
-void clear_input() {
-    char ch;
-
-    while ((ch = getchar()) != '\n' && ch != EOF);
-}
-
-/**
- * LÃª uma cadeia de caracteres (string) atravÃ©s da stream stdin
- *
- * @param frase - Apontador para a frase lida.
- * @param tamanho - Tamanho mÃ¡ximo da frase a ser lida. @warning: O tamanho da frase
-deve ter em conta o espaÃ§o para o caracter de tÃ©rmino da string ('\0')
- * @return 1 em caso de leitura com sucesso, 0 caso ocorra um erro.
- *
- * Exemplo:
- * char nome[100 + 1];
- * printf("Introduza o seu nome: ");
- * if (lerFrase (nome, 100 + 1) == 1)
- * printf("O nome lido e: %s", nome);
- */
-unsigned char lerFrase(char * const frase, const unsigned int tamanho) {
-    unsigned int sTam;
-    if (fgets(frase, tamanho, stdin) != NULL) {
-        sTam = strlen(frase) - 1;
-        if (frase[sTam] == '\n')
-            frase[sTam] = '\0';
-        return 1;
-    } else
-        return 0;
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////*esta e a funcao necessaria para abrir ficheiro Viagem*////////////////////////////////////
+
 void abrirViagem(viagem viagens[], const short TAMVIAGENS, int cont_viagem) {
     FILE *travel;
     travel = fopen("viagens.txt", "r");
-    if ((travel == (FILE*) NULL)){
+    if ((travel == (FILE*) NULL)) {
         printf("\n\n\tImpossivel abrir o ficheiro Viagem!\n\n");
         travel = fopen("viagens.txt", "w");
-    }else {
+    } else {
         cont_viagem = fread(viagens, sizeof (viagem), TAMVIAGENS, travel);
         fclose(travel);
     }
@@ -95,14 +43,15 @@ void abrirViagem(viagem viagens[], const short TAMVIAGENS, int cont_viagem) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////*esta e a funcao necessaria para abrir ficheiro Condutor*////////////////////////////////////
+
 void abrirCondutor(condutor condutores[], const short TAMCONDUTORES, int cont_condutor) {
     FILE *driver;
     condutor = fopen("condutores.txt", "r");
-    
-    if ((condutor == (FILE*) NULL)){
+
+    if ((condutor == (FILE*) NULL)) {
         printf("\n\n\tImpossivel abrir o ficheiro Condutor!\n\n");
         condutor = fopen("condutores.txt", "w");
-    }else {
+    } else {
         cont_condutor = fread(condutores, sizeof (condutor), TAMCONDUTORES, driver);
         fclose(driver);
     }
@@ -110,11 +59,12 @@ void abrirCondutor(condutor condutores[], const short TAMCONDUTORES, int cont_co
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////*esta e a funcao necessaria para abrir ficheiro Agenda*////////////////////////////////////
+
 void abrirAgenda(agendas agenda[], const short TAMAGENDA, int cont_agenda) {
-    
+
     FILE *agendamento;
     agendamento = fopen("agendamento.txt", "r");
-    
+
     if ((agendamento == (FILE*) NULL)) {
         printf("\n\n\tImpossivel abrir o ficheiro Agenda!\n\n");
         agendamento = fopen("agendamento.txt", "w");
@@ -126,11 +76,12 @@ void abrirAgenda(agendas agenda[], const short TAMAGENDA, int cont_agenda) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////*esta e a funcao necessaria para guardar o ficheiro Aluno*//////////////////////////////
-void guardarViagem(viagem viagens[], const short TAMVIAGENS,agendas agenda[], const short TAMAGENDA, 
+
+void guardarViagem(viagem viagens[], const short TAMVIAGENS, agendas agenda[], const short TAMAGENDA,
         int cont_viagem, int cont_agenda) {
-    
+
     FILE *travel;
-    
+
     travel = fopen("viagens.txt", "w");
     fwrite(viagens, sizeof (viagem), cont_viagem, travel);
     fclose(travel);
@@ -142,6 +93,7 @@ void guardarViagem(viagem viagens[], const short TAMVIAGENS,agendas agenda[], co
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////*esta e a funcao necessaria para guardar o ficheiro Aluno*//////////////////////////////
+
 void guardarCondutor(condutor condutores[], const short TAMCONDUTORES,
         agendas agenda[], const short TAMAGENDA, int cont_condutor, int cont_agenda) {
 
@@ -158,10 +110,11 @@ void guardarCondutor(condutor condutores[], const short TAMCONDUTORES,
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////*esta e a funcao necessaria para guardar o ficheiro Agenda*//////////////////////////////
+
 void guardarAgenda(agendas agenda[], const short TAMAGENDA, int cont_agenda) {
 
     FILE *agendamento;
-    
+
     agendamento = fopen("agendamento.txt", "w");
     fwrite(agenda, sizeof (agendas), cont_agenda, agendamento);
     fclose(agendamento);
@@ -230,138 +183,134 @@ unsigned int criarViagem(viagem viagens[], const short TAMVIAGENS, agendas agend
         int cont_viagem, int cont_agenda) {//Argumentos
     int x, i, ml, mc;
 
+    //clrscr();
+
     if (cont_viagem == 20) {
         printf("Base de dados cheia\n");
     } else {
-        //getchar();
 
-        x = lerNumViagem("\nNumero de Viagem: ");
-
+        i++;
         i = pesquisarViagem(x, viagens, cont_viagem);
         if (i != -1) {
             printf("\nESSA VIAGEM JA EXISTE!\n");
         } else {
             viagens[cont_viagem].id = x;
 
-            printf("\nLocal de Saida: ");
-            clear_input();
-            lerFrase(viagens[cont_viagem].l_inicio, NOME);
+            cleanInputBuffer();
+            readString(viagens[cont_viagem].l_inicio, NOME, "\n\tLocal de Saida: ");
 
-            printf("\nLocal de Destino: ");
-            lerFrase(viagens[cont_viagem].l_destino, TAM);
+            cleanInputBuffer();
+            readString(viagens[cont_viagem].l_destino, TAM, "\n\tLocal de Destino: ");
 
-            printf("\nNumero de Porta: ");
-            scanf("%d", &alunos[cont_aluno].morada.nporta);
+            cleanInputBuffer();
+            printf("\nData de Saida: ");
+            scanf("%hu %hu %d", &viagens[cont_viagem].data_saida.dia, &viagens[cont_viagem].data_saida.mes, &viagens[cont_viagem].data_saida.ano);
 
-            printf("\nCodigo Postal: ");
-            clear_input();
-            lerFrase(alunos[cont_aluno].morada.cod_postal, SIZE);
+            printf("\nHora de Saida: ");
+            cleanInputBuffer();
+            scanf("%hu %hu", &viagens[cont_viagem].hora_saida.hora, &viagens[cont_viagem].hora_saida.min);
 
-            printf("\nLocalidade: ");
-            lerFrase(alunos[cont_aluno].morada.localidade, TAM);
+            cleanInputBuffer();
+            readString("%i", &viagens[cont_viagem].lug_disp, TAM, "\n\tLugares Disponiveis: ");
 
-            printf("\nTelefone [XXX XXXXXX]: ");
-            //lerFrase(alunos[cont_aluno].telefone.prefixo);
-            scanf("%hu %d", &alunos[cont_aluno].telefone.indicativo, &alunos[cont_aluno].telefone.numero);
+            printf("\nConforto do Veiculo? [Basico=1,Confortavel=2,Luxuoso=3]: ");
+            scanf("%i", &viagens[cont_viagem].t_conforto);
 
-            printf("\nData de Nascimento [DD MM AA]: ");
-            scanf("%hu %hu %d", &alunos[cont_aluno].data_nascimento.dia, &alunos[cont_aluno].data_nascimento.mes, &alunos[cont_aluno].data_nascimento.ano);
+            printf("\nCusto: ");
+            scanf("%f", &viagens[cont_viagem].custo);
 
-            printf("\nCategoria de Conducao [A=1,B=2,C=3,D=4]: ");
-            scanf("%i", &alunos[cont_aluno].categorias);
+            printf("\nRevalidacoes?: ");
+            scanf("%f", &viagens[cont_viagem].revalidacoes);
 
-            printf("\nRevalidacao da Carta [SIM=1,NAO=0]: ");
-            scanf("%i", &alunos[cont_aluno].revalidacoes);
 
             /*Inicia a matriz com os valor a 0 e com espaÃ§o*/
             for (ml = 0; ml < LINHA; ml++) {
                 for (mc = 0; mc < COLUNA; mc++) {
-                    alunos[cont_aluno].agenda[ml][mc].id = 0;
-                    strncpy(alunos[cont_aluno].agenda[ml][mc].nome, " ", NOME);
+                    viagens[cont_viagem].agenda[ml][mc].id = 0;
+                    strncpy(viagens[cont_viagem].agenda[ml][mc].nome, " ", NOME);
                 }
             }
-            cont_aluno++;
-            ordenarAlunos(0, cont_aluno - 1, alunos);
+            cont_viagem++;
+            ordenarViagem(0, cont_viagem - 1, viagens);
             cont_agenda++;
         }
     }
 
-    return cont_aluno;
+    return cont_viagem;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////*funÃ§Ã£o para saber se o vector dos alunos estÃ¡ vazio*///////////////////////////
 
-int estaVazioVectorAlunos(unsigned int cont_aluno) {
-    return (cont_aluno == 0);
+int estaVazioVectorViagens(unsigned int cont_viagem) {
+    return (cont_viagem == 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////*funcao que vai remover os alunos*///////////////////////////////////////////////
 
-unsigned int removerAluno(aluno alunos[], const short TAMALUNOS, int cont_aluno) {//Argumentos
+unsigned int removerViagem(viagem viagens[], const short TAMVIAGENS, int cont_viagem) {//Argumentos
     int x, i, z;
 
-    if (estaVazioVectorAlunos(cont_aluno)) {
-        printf("Nao existem alunos para remover!\n");
+    if (estaVazioVectorViagens(cont_viagem)) {
+        printf("Nao existem viagens para remover!\n");
     } else {
 
-        x = lerCartaoCidadao("Introduza o cc para remover: ");
 
-        i = pesquisarAlunos(x, alunos, cont_aluno);
+        printf("\nIntroduza o numero da Viagem para remover: ");
+        x = scanf("%i", &viagens[cont_viagem].id);
+        i = pesquisarViagem(x, viagem, cont_viagem);
 
         if (i == -1) {
-            printf("\nESSE ALUNO NAO EXISTE\n");
+            printf("\nESSA VIAGEM NAO EXISTE\n");
         } else {
-            for (z = i; z < cont_aluno; z++) {
-                alunos[z] = alunos[z + 1];
+            for (z = i; z < cont_viagem; z++) {
+                viagens[z] = viagens[z + 1];
             }
-            cont_aluno--;
+            cont_viagem--;
         }
     }
 
-    return cont_aluno;
+    return cont_viagem;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////* funcao que vai listar os alunos*////////////////////////////////
 
-void listarAluno(aluno alunos[], unsigned int cont_aluno) {//Argumentos
+void listarViagem(viagem viagens[], unsigned int cont_viagem) {//Argumentos
 
     int i;
 
-    if (cont_aluno == 0)
+    if (cont_viagem == 0)
         printf("\nNao existem alunos para listar\n");
     else {
-        for (i = 0; i < cont_aluno; i++) {
+        for (i = 0; i < cont_viagem; i++) {
             printf("\n<---------------------------------->\n");
-            printf("\nCartao de Cidadao: %ld", alunos[i].id_aluno);
-            printf("\nNome do aluno: %s", alunos[i].nome);
-            printf("\nRua: %s", alunos[i].morada.rua);
-            printf("\nNumero de Porta: %d", alunos[i].morada.nporta);
-            printf("\nCodigo Postal: %s ", alunos[i].morada.cod_postal);
-            printf("\nLocalidade: %s ", alunos[i].morada.localidade);
-            printf("\nTelefone: %hu-%d", /*alunos[i].telefone.prefixo,*/ alunos[i].telefone.indicativo, alunos[i].telefone.numero);
-            printf("\nData de Nascimento: %hu/%hu/%d", alunos[i].data_nascimento.dia, alunos[i].data_nascimento.mes, alunos[i].data_nascimento.ano);
+            printf("\nNumero de Viagem: %ld", viagens[i].id);
+            printf("\nLocal de Partida: %s", viagens[i].l_inicio);
+            printf("\nDestino: %s", viagens[i].l_destino);
+            printf("\nData de Saida: %hu/%hu/%d", viagens[i].data_saida.dia, viagens[i].data_saida.mes, viagens[i].data_saida.ano);
+            printf("\nLugares Disponiveis: %hu", viagens[i].lug_disp);
+            printf("\nTipo de Conforto: %s", viagens[i].t_conforto);
 
-            switch (alunos[i].categorias) {
-                case 1: printf("\nCategoria de Conducao: A");
+
+            switch (viagens[i].t_conforto) {
+                case 1: printf("\nBasico: 1");
                     break;
-                case 2: printf("\nCategoria de Conducao: B");
+                case 2: printf("\nConfortavel: 2");
                     break;
-                case 3: printf("\nCategoria de Conducao: C");
+                case 3: printf("\nLuxuoso: 3");
                     break;
-                case 4: printf("\nCategoria de Conducao: D");
-                    break;
-                case 5: break;
+                case 4: break;
             }
-            switch (alunos[i].revalidacoes) {
-                case 1: printf("\nRevalidacao da Carta: SIM");
+            switch (viagens[i].revalidacoes) {
+                case 1: printf("\nRevalidacao: SIM");
                     break;
-                case 0: printf("\nRevalidacao da Carta: NAO");
+                case 0: printf("\nRevalidacao: NAO");
                     break;
                 case 2: break;
             }
+            printf("\nCusto da Viagem: %s ", viagens[i].custo);
         }
         printf("\n<---------------------------------->\n");
     }
@@ -370,56 +319,55 @@ void listarAluno(aluno alunos[], unsigned int cont_aluno) {//Argumentos
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////*funcao que vai alterar os alunos*/////////////////////////////////////
 
-void alterarAluno(aluno alunos[], int cont_aluno) { //Argumentos
+void alterarViagem(viagem viagens[], int cont_viagem) { //Argumentos
     int x, i, a;
 
-    if (estaVazioVectorAlunos(cont_aluno)) {
-        printf("\nNao existem alunos para alterar!\n");
+    if (estaVazioVectorViagens(cont_viagem)) {
+        printf("\nNao existe viagens para alterar!\n");
     } else {
 
-        x = lerCartaoCidadao("\nIntroduza o cc para alterar: ");
-        i = pesquisarAlunos(x, alunos, cont_aluno);
+        printf("\nIntroduza o numero da Viagem para remover: ");
+        x = scanf("%i", &viagens[cont_viagem].id);
+        i = pesquisarViagem(x, viagens, cont_viagem);
         if (i == -1) {
-            printf("\nNao existe o CC introduzido!\n");
+            printf("\nNao existe a viagem introduzido!\n");
         } else {
-            x = lerCartaoCidadao("\nCartao de Cidadao do aluno [XXXXXXXXX]: ");
-            a = pesquisarAlunos(x, alunos, cont_aluno);
+            printf("\nIntroduza o numero da Viagem para remover: ");
+            x = scanf("%i", &viagens[cont_viagem].id);
+            a = pesquisarViagem(x, viagens, cont_viagem);
             if (a != -1) {
-                printf("\nESSE CC JA EXISTE!\n");
+                printf("\nESSA VIAGEM JA EXISTE!\n");
             } else {
-                alunos[i].id_aluno = x;
+                viagens[i].id = x;
 
-                printf("\nNome do Aluno: ");
-                clear_input();
-                lerFrase(alunos[i].nome, NOME);
+                cleanInputBuffer();
+                readString(viagens[cont_viagem].l_inicio, NOME, "\n\tLocal de Saida: ");
 
-                printf("\nRua: ");
-                lerFrase(alunos[i].morada.rua, TAM);
+                cleanInputBuffer();
+                readString(viagens[cont_viagem].l_destino, TAM, "\n\tLocal de Destino: ");
 
-                printf("\nNumero de Porta: ");
-                scanf("%d", &alunos[i].morada.nporta);
+                cleanInputBuffer();
+                printf("\nData de Saida: ");
+                scanf("%hu %hu %d", &viagens[cont_viagem].data_saida.dia, &viagens[cont_viagem].data_saida.mes, &viagens[cont_viagem].data_saida.ano);
 
-                printf("\nCodigo Postal: ");
-                clear_input();
-                lerFrase(alunos[i].morada.cod_postal, SIZE);
+                printf("\nHora de Saida: ");
+                cleanInputBuffer();
+                scanf("%hu %hu", &viagens[cont_viagem].hora_saida.hora, &viagens[cont_viagem].hora_saida.min);
 
-                printf("\nLocalidade: ");
-                lerFrase(alunos[i].morada.localidade, TAM);
+                cleanInputBuffer();
+                readString("%i", &viagens[cont_viagem].lug_disp, TAM, "\n\tLugares Disponiveis: ");
 
-                printf("\nTelefone [XXX XXXXXX]: ");
-                //gets(alunos[cont_aluno].telefone.prefixo);
-                scanf("%hu-%d", &alunos[i].telefone.indicativo, &alunos[i].telefone.numero);
+                printf("\nConforto do Veiculo? [Basico=1,Confortavel=2,Luxuoso=3]: ");
+                scanf("%i", &viagens[cont_viagem].t_conforto);
 
-                printf("\nData de Nascimento [DD MM AA]: ");
-                scanf("%hu/%hu/%d", &alunos[i].data_nascimento.dia, &alunos[i].data_nascimento.mes, &alunos[i].data_nascimento.ano);
+                printf("\nCusto: ");
+                scanf("%f", &viagens[cont_viagem].custo);
 
-                printf("\nCategoria de Conducao [A=1,B=2,C=3,D=4]: ");
-                scanf("%i", &alunos[i].categorias);
+                printf("\nRevalidacoes?: ");
+                scanf("%f", &viagens[cont_viagem].revalidacoes);
 
-                printf("\nRevalidacao da Carta [SIM=1,NAO=0]: ");
-                scanf("%i", &alunos[i].revalidacoes);
 
-                ordenarAlunos(0, cont_aluno - 1, alunos);
+                ordenarViagem(0, cont_viagem - 1, viagens);
 
             }
         }
@@ -430,15 +378,15 @@ void alterarAluno(aluno alunos[], int cont_aluno) { //Argumentos
 /////////////////////////*esta e a funcao responsavel pela pesquisa de instrutores */////////////////
 //////////////////////////////*o modo de pesquisa e a pesquisa binaria*/////////////////////////////
 
-int pesquisarInstrutor(int x, instrutor instrutores[], int cont_instrutor) {
+int pesquisarCondutor(int x, condutor condutores[], int cont_condutor) {
     int i;
     int l = 0; //Limite inferior
-    int u = cont_instrutor - 1; //Limite superior
+    int u = cont_condutor - 1; //Limite superior
     while (l <= u) {
         i = l + (l - u) / 2;
-        if (x == instrutores[i].numero_instrutor) {
+        if (x == condutores[i].numero_condutor) {
             return i;
-        } else if (x < instrutores[i].numero_instrutor) {
+        } else if (x < condutores[i].numero_condutor) {
             u = i - 1;
         } else {
             l = i + 1;
@@ -452,26 +400,26 @@ int pesquisarInstrutor(int x, instrutor instrutores[], int cont_instrutor) {
 ////////////////*esta e a funcao responsavel pela ordenaÃ§Ã£o de instrutores *////////////////////////
 ///////////////////////*o modo de pesquisa e a pesquisa binaria*//////////////////////////////////////
 
-ordenarInstrutores(int inf, int sup, instrutor instrutores[]) {
+ordenarCondutor(int inf, int sup, condutor condutores[]) {
     int i, j;
-    instrutor temp;
+    condutor temp;
 
     while (sup > inf) {
         i = inf;
         j = sup;
-        temp = instrutores[inf];
+        temp = condutores[inf];
         while (i < j) {
-            while (instrutores[j].numero_instrutor > temp.numero_instrutor) {
+            while (condutores[j].numero_condutor > temp.numero_condutor) {
                 j--;
             }
-            instrutores[i] = instrutores[j];
-            while (i < j && instrutores[i].numero_instrutor <= temp.numero_instrutor) {
+            condutores[i] = condutores[j];
+            while (i < j && condutores[i].numero_condutor <= temp.numero_condutor) {
                 i++;
             }
-            instrutores[j] = instrutores[i];
+            condutores[j] = condutores[i];
         }
-        instrutores[i] = temp;
-        ordenarInstrutores(inf, i - 1, instrutores);
+        condutores[i] = temp;
+        ordenarCondutor(inf, i - 1, condutores);
         inf = i + 1;
     }
 }
@@ -479,98 +427,82 @@ ordenarInstrutores(int inf, int sup, instrutor instrutores[]) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////* funcao que vai criar os instrutores *//////////////////////////////////////////////////
 
-unsigned int criarInstrutor(instrutor instrutores[], const short TAMINSTRUTORES, agendas agenda[], const short TAMAGENDA,
-        int cont_instrutor) {
+unsigned int criarCondutor(condutor condutores[], const short TAMCONDUTORES, agendas agenda[], const short TAMAGENDA,
+        int cont_condutor) {
 
     int x, i, ml, mc;
 
-    if (cont_instrutor == 5)
+    if (cont_condutor == 5)
         printf("Base de dados cheia\n");
     else {
-        x = lerLicenca("\nLicenca do instrutor: ");
+        printf("\nIntroduza o numero do condutor: ");
+        x = scanf("%i", &condutores[cont_condutor].numero_condutor);
 
-        i = pesquisarInstrutor(x, instrutores, cont_instrutor);
+        i = pesquisarCondutor(x, condutores, cont_condutor);
         if (i != -1) {
             printf("\nESSE NUMERO JA EXISTE!");
         } else {
-            instrutores[cont_instrutor].numero_instrutor = x;
+            condutores[cont_condutor].numero_condutor = x;
 
-            printf("\nNome do Instrutor: ");
-            clear_input();
-            lerFrase(instrutores[cont_instrutor].nome, NOME);
+            cleanInputBuffer();
+            readString(condutores[cont_condutor].nome, NOME, "\n\tNome do Condutor: ");
 
-            printf("\nRua: ");
-            lerFrase(instrutores[cont_instrutor].morada.rua, TAM);
+            cleanInputBuffer();
+            printf("\ntelefone [XXX XXXXXX]: ");
+            scanf("%hu %d", &condutores[cont_condutor].telefone.indicativo, &condutores[cont_condutor].telefone.numero);
 
-            printf("\nNumero de Porta: ");
-            scanf("%d", &instrutores[cont_instrutor].morada.nporta);
+            cleanInputBuffer();
+            printf("\nData de Nacimento: ");
+            scanf("%hu %hu %d", &condutores[cont_condutor].data_nascimento.dia, &condutores[cont_condutor].data_nascimento.mes, &condutores[cont_condutor].data_nascimento.ano);
 
-            printf("\nCodigo Postal: ");
-            clear_input();
-            lerFrase(instrutores[cont_instrutor].morada.cod_postal, SIZE);
-
-            printf("\nLocalidade: ");
-            lerFrase(instrutores[cont_instrutor].morada.localidade, TAM);
-
-            printf("\nTelefone [XXX XXXXXX]: ");
-            //gets(instrutores[cont_aluno].telefone.prefixo);
-            scanf("%hu %d", &instrutores[cont_instrutor].telefone.indicativo, &instrutores[cont_instrutor].telefone.numero);
-
-            printf("\nData de Nascimento [DD MM AA]: ");
-            scanf("%hu %hu %d", &instrutores[cont_instrutor].data_nascimento.dia, &instrutores[cont_instrutor].data_nascimento.mes, &instrutores[cont_instrutor].data_nascimento.ano);
-
-            printf("\nCategoria de Conducao [A=1,B=2,C=3,D=4]: ");
-            scanf("%i", &instrutores[cont_instrutor].categorias);
-
-            printf("\nSalario: ");
-            scanf("%f", &instrutores[cont_instrutor].salario);
 
             /*Inicia a matriz com os valor a 0 e com espaÃ§o*/
             for (ml = 0; ml < LINHA; ml++) {
                 for (mc = 0; mc < COLUNA; mc++) {
-                    instrutores[cont_instrutor].agenda[ml][mc].id = 0;
-                    strncpy(instrutores[cont_instrutor].agenda[ml][mc].nome, "_", NOME);
+                    condutores[cont_condutor].agenda[ml][mc].id = 0;
+                    strncpy(condutores[cont_condutor].agenda[ml][mc].nome, "_", NOME);
                 }
             }
-            cont_instrutor++;
-            ordenarInstrutores(0, cont_instrutor - 1, instrutores);
+            cont_condutor++;
+            ordenarCondutor(0, cont_condutor - 1, condutores);
         }
     }
-    return cont_instrutor;
+    return cont_condutor;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////*funÃ§Ã£o para saber se o vector dos instrutores estÃ¡ vazio*////////////////////
 
-int estaVazioVectorIntrutor(unsigned int cont_instrutor) {
-    return (cont_instrutor == 0);
+int estaVazioVectorCondutor(unsigned int cont_condutor) {
+    return (cont_condutor == 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////*funcao que vai remover os instrutores*///////////////////////////////////////////
 
-unsigned int removerInstrutor(instrutor instrutores[], const short TAMINSTRUTORES,
-        int cont_instrutor) {
+unsigned int removerCondutor(condutor condutores[], const short TAMINSTRUTORES,
+        int cont_condutor) {
     int x, i, z;
 
-    if (estaVazioVectorIntrutor(cont_instrutor)) {
-        printf("\nNao existem instrutores para remover!\n");
+    if (estaVazioVectorCondutor(cont_condutor)) {
+        printf("\nNao existem condutores para remover!\n");
     } else {
 
-        x = lerLicenca("Licenca do instrutor: ");
+        printf("\nIntroduza o numero do condutor: ");
+        x = scanf("%i", &condutores[cont_condutor].numero_condutor);
 
         i = pesquisarInstrutor(x, instrutores, cont_instrutor);
 
         if (i == -1) {
-            printf("\nESSE INSTRUTOR NAO EXISTE\n");
+            printf("\nESSE CONDUTOR NAO EXISTE\n");
         } else {
-            for (z = i; z < cont_instrutor; z++) {
-                instrutores[z] = instrutores[z + 1];
+            for (z = i; z < cont_condutor; z++) {
+                condutores[z] = condutores[z + 1];
             }
-            cont_instrutor--;
+            cont_condutor--;
 
         }
-        return cont_instrutor;
+        return cont_condutor;
     }
 }
 
@@ -578,36 +510,19 @@ unsigned int removerInstrutor(instrutor instrutores[], const short TAMINSTRUTORE
 ////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////* funcao que vai listar os instrutores*///////////////////////////
 
-void listarInstrutor(instrutor instrutores[], const short TAMINSTRUTORES,
-        agendas agenda[], const short TAMAGENDA, int cont_instrutor, int cont_agenda) {
+void listarCondutor(condutor condutores[], const short TAMCONDUTORES,
+        agendas agenda[], const short TAMAGENDA, int cont_condutor, int cont_agenda) {
     int i;
 
-    if (cont_instrutor == 0)
-        printf("\nNao existem instrutores para listar\n");
+    if (cont_condutor == 0)
+        printf("\nNao existem condutores para listar\n");
     else {
-        for (i = 0; i < cont_instrutor; i++) {
+        for (i = 0; i < cont_condutor; i++) {
             printf("\n<---------------------------------->\n");
-            printf("\nNumero de licenca: %ld", instrutores[i].numero_instrutor);
-            printf("\nNome do instrutor: %s", instrutores[i].nome);
-            printf("\nRua: %s", instrutores[i].morada.rua);
-            printf("\nNumero de Porta: %d", instrutores[i].morada.nporta);
-            printf("\nCodigo Postal: %s ", instrutores[i].morada.cod_postal);
-            printf("\nLocalidade: %s ", instrutores[i].morada.localidade);
-            printf("\nTelefone: %hu-%d", /*instrutores[i].telefone.prefixo,*/ instrutores[i].telefone.indicativo, instrutores[i].telefone.numero);
-            printf("\nData de Nascimento: %hu/%hu/%d", instrutores[i].data_nascimento.dia, instrutores[i].data_nascimento.mes, instrutores[i].data_nascimento.ano);
-
-            switch (instrutores[i].categorias) {
-                case 1: printf("\nCategoria de Conducao: A");
-                    break;                    
-                case 2: printf("\nCategoria de Conducao: B");
-                    break;                   
-                case 3: printf("\nCategoria de Conducao: C");
-                    break;                    
-                case 4: printf("\nCategoria de Conducao: D");
-                    break;                  
-                case 5: break;
-            }
-            printf("\nSalario: %f", instrutores[i].salario);
+            printf("\nNumero do Condutor: %ld", condutores[i].numero_condutor);
+            printf("\nNome do Condutor: %s", condutores[i].nome);
+            printf("\nTelefone: %hu-%d", /*instrutores[i].telefone.prefixo,*/ condutores[i].telefone.indicativo, condutores[i].telefone.numero);
+            printf("\nData de Nascimento: %hu/%hu/%d", condutores[i].data_nascimento.dia, condutores[i].data_nascimento.mes, condutores[i].data_nascimento.ano);
         }
         printf("\n<---------------------------------->\n");
     }
@@ -616,59 +531,41 @@ void listarInstrutor(instrutor instrutores[], const short TAMINSTRUTORES,
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////* funcao que vai alterar os instrutores*/////////////////////////////
 
-void alterarInstrutor(instrutor instrutores[], const short TAMINSTRUTORES,
-        agendas agenda[], const short TAMAGENDA, int cont_instrutor, int cont_agenda) {
+void alterarCondutor(condutor condutores[], const short TAMCONDUTORES,
+        agendas agenda[], const short TAMAGENDA, int cont_condutor, int cont_agenda) {
     int x, i, a;
 
-    if (cont_instrutor == 0) {
-        printf("\nNao existem instrutores para alterar\n");
+    if (cont_condutor == 0) {
+        printf("\nNao existem condutores para alterar\n");
     } else {
 
-        x = lerLicenca("\nLicenca do instrutor: ");
+        printf("\nIntroduza o numero do condutor: ");
+        x = scanf("%i", &condutores[cont_condutor].numero_condutor);
 
-        i = pesquisarInstrutor(x, instrutores, cont_instrutor);
+        i = pesquisarCondutor(x, condutores, cont_condutor);
         if (i == -1) {
             printf("\nNao existe o numero introduzido!\n");
         } else {
 
-            printf("\nNumero de licenca?: ");
+            printf("\nNumero do Condutor?: ");
             scanf("%ld", &x);
-            a = pesquisarInstrutor(x, instrutores, cont_instrutor);
+            a = pesquisarCondutor(x, condutores, cont_condutor);
             if (a != -1) {
                 printf("\nESSE NUMERO JA EXISTE!\n");
             } else {
-                instrutores[i].numero_instrutor = x;
-                printf("\nNome do Instrutor: ");
-                clear_input();
-                lerFrase(instrutores[i].nome, NOME);
+                condutores[i].numero_condutor = x;
+                cleanInputBuffer();
+                readString(condutores[cont_condutor].nome, NOME, "\n\tNome do Condutor: ");
 
-                printf("\nRua: ");
-                lerFrase(instrutores[i].morada.rua, TAM);
+                cleanInputBuffer();
+                printf("\ntelefone [XXX XXXXXX]: ");
+                scanf("%hu %d", &condutores[cont_condutor].telefone.indicativo, &condutores[cont_condutor].telefone.numero);
 
-                printf("\nNumero de Porta: ");
-                scanf("%d", &instrutores[i].morada.nporta);
+                cleanInputBuffer();
+                printf("\nData de Nacimento: ");
+                scanf("%hu %hu %d", &condutores[cont_condutor].data_nascimento.dia, &condutores[cont_condutor].data_nascimento.mes, &condutores[cont_condutor].data_nascimento.ano);
 
-                printf("\nCodigo Postal: ");
-                clear_input();
-                lerFrase(instrutores[i].morada.cod_postal, SIZE);
-
-                printf("\nLocalidade: ");
-                lerFrase(instrutores[i].morada.localidade, TAM);
-
-                printf("\nTelefone [XXX XXXXXX]: ");
-                //gets(instrutores[cont_aluno].telefone.prefixo);
-                scanf("%hu %d", &instrutores[i].telefone.indicativo, &instrutores[i].telefone.numero);
-
-                printf("\nData de Nascimento [DD MM AA]: ");
-                scanf("%hu %hu %d", &instrutores[i].data_nascimento.dia, &instrutores[i].data_nascimento.mes, &instrutores[i].data_nascimento.ano);
-
-                printf("\nCategoria de Conducao [A=1,B=2,C=3,D=4]: ");
-                scanf("%i", &instrutores[i].categorias);
-
-                printf("Salario: ");
-                scanf("%f", &instrutores[i].salario);
-
-                ordenarInstrutores(0, cont_instrutor - 1, instrutores);
+                ordenarCondutor(0, cont_condutor - 1, condutores);
 
             }
         }
@@ -679,81 +576,81 @@ void alterarInstrutor(instrutor instrutores[], const short TAMINSTRUTORES,
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////* funcao responsavel pelo menu dos alunos */////////////////////////
 
-unsigned int menuAlunos(aluno alunos[], const short TAMALUNOS, agendas agenda[], const short TAMAGENDA,
-        int cont_aluno , int cont_agenda) { //Argumentos
+unsigned int menuViagem(viagem viagens[], const short TAMVIAGENS, agendas agenda[], const short TAMAGENDA,
+        int cont_viagem, int cont_agenda) { //Argumentos
     int optn;
     do {
         do {
             printf("\n__________________________________________\n");
-            printf("\n------------------Alunos------------------\n");
-            printf("1----> Criar Aluno\n");
-            printf("2----> Remover Aluno\n");
-            printf("3----> Listar Aluno\n");
-            printf("4----> Alterar Aluno\n");
+            printf("\n------------------Viagens------------------\n");
+            printf("1----> Criar Viagem\n");
+            printf("2----> Remover Viagem\n");
+            printf("3----> Listar Viagem\n");
+            printf("4----> Alterar Viagem\n");
             printf("5----> Voltar Atras\n");
             printf("__________________________________________\nIntroduza a opcao: ");
             scanf("%d", &optn);
         } while ((optn < 1) || (optn > 5));
 
         switch (optn) {
-            case 1: cont_aluno = criarAluno(alunos, TAMALUNOS, agenda, TAMAGENDA, cont_aluno, cont_agenda);
+            case 1: cont_viagem = criarViagem(viagens, TAMVIAGENS, agenda, TAMAGENDA, cont_viagem, cont_agenda);
                 break;
-                
-            case 2: cont_aluno = removerAluno(alunos, TAMALUNOS, cont_aluno);
+
+            case 2: cont_viagem = removerViagem(viagens, TAMVIAGENS, cont_viagem);
                 break;
-                
-            case 3: listarAluno(alunos, cont_aluno);
+
+            case 3: listarViagem(viagens, cont_viagem);
                 break;
-                
-            case 4: alterarAluno(alunos, cont_aluno);
+
+            case 4: alterarViagem(viagens, cont_viagem);
                 break;
-                
+
             case 5:
                 break;
         }
     } while (optn != 5);
 
-    return cont_aluno;
+    return cont_viagem;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////* funcao responsavel pelo menu dos instrutores *///////////////////
 
-unsigned int menuInstrutores(instrutor instrutores[], const short TAMINSTRUTORES,
-        agendas agenda[], const short TAMAGENDA, int cont_instrutor, int cont_agenda) {
+unsigned int menuCondutor(condutor condutores[], const short TAMCONDUTORES,
+        agendas agenda[], const short TAMAGENDA, int cont_condutor, int cont_agenda) {
 
     int optn;
     do {
         do {
             printf("\n__________________________________________\n");
-            printf("\n----------------Instrutores---------------\n");
-            printf("1----> Criar Instrutor\n");
-            printf("2----> Remover Instrutor\n");
-            printf("3----> Listar Instrutor\n");
-            printf("4----> Alterar Instrutor\n");
+            printf("\n----------------Condutores---------------\n");
+            printf("1----> Criar Condutor\n");
+            printf("2----> Remover Condutor\n");
+            printf("3----> Listar Condutor\n");
+            printf("4----> Alterar Condutor\n");
             printf("5----> Voltar Atras\n");
             printf("__________________________________________\nIntroduza a opcao: ");
             scanf("%d", &optn);
         } while ((optn < 1) || (optn > 5));
 
         switch (optn) {
-            case 1: cont_instrutor = criarInstrutor(instrutores, TAMINSTRUTORES, agenda, TAMAGENDA, cont_instrutor);
+            case 1: cont_condutor = criarCondutor(condutores, TAMCONDUTORES, agenda, TAMAGENDA, cont_condutor);
                 break;
-                
-            case 2: cont_instrutor = removerInstrutor(instrutores, TAMINSTRUTORES, cont_instrutor);
+
+            case 2: cont_condutor = removerCondutor(condutores, TAMCONDUTORES, cont_condutor);
                 break;
-                
-            case 3: listarInstrutor(instrutores, TAMINSTRUTORES, agenda, TAMAGENDA, cont_instrutor, cont_agenda);
+
+            case 3: listarCondutor(condutores, TAMCONDUTORES, agenda, TAMAGENDA, cont_condutor, cont_agenda);
                 break;
-                
-            case 4: alterarInstrutor(instrutores, TAMINSTRUTORES, agenda, TAMAGENDA, cont_instrutor, cont_agenda);
+
+            case 4: alterarCondutor(condutores, TAMCONDUTORES, agenda, TAMAGENDA, cont_condutor, cont_agenda);
                 break;
-                
+
             case 5:
                 break;
         }
     } while (optn != 5);
-    return cont_instrutor;
+    return cont_condutor;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -795,8 +692,8 @@ void criarAula(aluno alunos[], const short TAMALUNOS, instrutor instrutores[], c
             strncpy(alunos[ncc].agenda[hora][dia].nome, alunos[ncc].agenda[hora][dia].nome, NOME);
             instrutores[nlicenca].agenda[hora][dia].id = alunos[ncc].id_aluno;
             strncpy(instrutores[nlicenca].nome, instrutores[nlicenca].agenda[hora][dia].nome, NOME);
-            
-    
+
+
         }
     } else if (cont_aluno == 0) {
         printf("Nao existe alunos \n");
@@ -881,7 +778,7 @@ void listarAgenda(aluno alunos[], const short TAMALUNOS, instrutor instrutores[]
 
             printf("%i", alunos[ncc].agenda[ml][mc].id);
             printf("\t");
-            if (mc == 5 && y<17) {
+            if (mc == 5 && y < 17) {
                 printf("\n%i\t", ++y);
             }
         }
@@ -894,7 +791,7 @@ void listarAgenda(aluno alunos[], const short TAMALUNOS, instrutor instrutores[]
 ////////////////////////*funcao que vai alterar a agenda*//////////////////////////////////////////////
 
 void alterarAgenda(aluno alunos[], instrutor instrutores[], int cont_instrutor, int cont_aluno) {
-        
+
     unsigned long int cc, licenca;
     int ncc, nlicenca, dia, hora, x;
 
@@ -924,9 +821,9 @@ void alterarAgenda(aluno alunos[], instrutor instrutores[], int cont_instrutor, 
             nlicenca = pesquisarInstrutor(licenca, instrutores, cont_instrutor);
             alunos[ncc].agenda[hora][dia].id = 0;
             instrutores[nlicenca].agenda[hora][dia].id = 0;
-            
-            }
-            {
+
+        }
+        {
             do {
                 printf("Insira o dia da semana [Segunda=0,Terca=1..Sabado=5]: ");
                 scanf("%i", &dia);
@@ -944,7 +841,7 @@ void alterarAgenda(aluno alunos[], instrutor instrutores[], int cont_instrutor, 
             licenca = lerLicenca("Licenca do instrutor: ");
 
             nlicenca = pesquisarInstrutor(licenca, instrutores, cont_instrutor);
-            
+
             alunos[ncc].agenda[hora][dia].id = alunos[ncc].id_aluno;
             strncpy(alunos[ncc].agenda[hora][dia].nome, alunos[ncc].agenda[hora][dia].nome, NOME);
             instrutores[nlicenca].agenda[hora][dia].id = alunos[ncc].id_aluno;
@@ -977,16 +874,16 @@ void menuAgenda(aluno alunos[], const short TAMALUNOS, instrutor instrutores[], 
         switch (optn) {
             case 1: criarAula(alunos, TAMALUNOS, instrutores, TAMINSTRUTORES, agenda, TAMAGENDA, cont_instrutor, cont_aluno, cont_agenda);
                 break;
-                
+
             case 2: removerAgenda(alunos, TAMALUNOS, instrutores, TAMINSTRUTORES, agenda, TAMAGENDA, cont_instrutor, cont_aluno, cont_agenda);
                 break;
-                
+
             case 3: listarAgenda(alunos, TAMALUNOS, instrutores, TAMINSTRUTORES, agenda, TAMAGENDA, cont_instrutor, cont_aluno, cont_agenda);
                 break;
-                
+
             case 4: alterarAgenda(alunos, instrutores, cont_instrutor, cont_aluno);
                 break;
-                
+
             case 5:
                 break;
         }
@@ -1017,21 +914,21 @@ void menu(aluno alunos[], const short TAMALUNOS, instrutor instrutores[], const 
         switch (optn) {
             case 1: cont_aluno = menuAlunos(alunos, TAMALUNOS, agenda, TAMAGENDA, cont_aluno, cont_agenda);
                 break;
-                
+
             case 2: cont_instrutor = menuInstrutores(instrutores, TAMINSTRUTORES, agenda, TAMAGENDA, cont_instrutor, cont_agenda);
                 break;
-                
+
             case 3: menuAgenda(alunos, TAMALUNOS, instrutores, TAMINSTRUTORES, agenda, TAMAGENDA, cont_instrutor, cont_aluno, cont_agenda);
                 break;
-                
+
             case 4: abrirAluno(alunos, TAMALUNOS, cont_aluno);
-                    abrirInstrutor(instrutores, TAMINSTRUTORES, cont_instrutor);
-                    abrirAgenda(agenda, TAMAGENDA, cont_agenda);
+                abrirInstrutor(instrutores, TAMINSTRUTORES, cont_instrutor);
+                abrirAgenda(agenda, TAMAGENDA, cont_agenda);
                 break;
 
             case 5: guardarAluno(alunos, TAMALUNOS, agenda, TAMAGENDA, cont_aluno, cont_agenda);
-                    guardarInstrutor(instrutores, TAMINSTRUTORES, agenda, TAMAGENDA, cont_instrutor, cont_agenda);
-                    guardarAgenda(agenda, TAMAGENDA, cont_agenda);
+                guardarInstrutor(instrutores, TAMINSTRUTORES, agenda, TAMAGENDA, cont_instrutor, cont_agenda);
+                guardarAgenda(agenda, TAMAGENDA, cont_agenda);
                 break;
 
             case 6: //exit(1);
